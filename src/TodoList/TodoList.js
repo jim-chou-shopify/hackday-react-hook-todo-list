@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import Todo from "./components/Todo";
 
 export default function TodoList(props) {
   const [todoInput, setTodoInput] = useState("");
-  const [todos, setTodos] = useState(props.initialTodos);
+  const [todos, setTodos] = useState(props.initialTodos || []);
+  const [completedTodoIds, setCompletedTodoIds] = useState([]);
 
   function handleTodoInput(e) {
     setTodoInput(e.target.value);
@@ -11,6 +13,16 @@ export default function TodoList(props) {
 
   function handleAddTodo() {
     setTodos([...todos, todoInput]);
+  }
+
+  function handleComplete(id) {
+    setCompletedTodoIds([...completedTodoIds, id]);
+  }
+
+  function handleUndo(id) {
+    const ids = completedTodoIds.filter(completedId => completedId !== id);
+    console.log(ids);
+    setCompletedTodoIds(ids);
   }
 
   function handleDelete(index) {
@@ -25,10 +37,21 @@ export default function TodoList(props) {
     todos &&
     todos.map((todo, i) => (
       <li key={i}>
-        <Todo index={i} item={todo} handleDelete={handleDelete} />
+        <Todo
+          id={i}
+          item={todo}
+          handleDelete={handleDelete}
+          handleComplete={handleComplete}
+          handleUndo={handleUndo}
+        />
       </li>
     ));
 
+  const completedTodoMarkup =
+    completedTodoIds &&
+    completedTodoIds.map(id => {
+      return <li key={id}>{todos[id]}</li>;
+    });
   return (
     <>
       <form>
@@ -38,6 +61,14 @@ export default function TodoList(props) {
         </button>
       </form>
       <ul>{todosMarkup}</ul>
+      <section>
+        <h2>Completed todos:</h2>
+        <ul>{completedTodoMarkup}</ul>
+      </section>
     </>
   );
 }
+
+TodoList.propTypes = {
+  initialTodos: PropTypes.object
+};
