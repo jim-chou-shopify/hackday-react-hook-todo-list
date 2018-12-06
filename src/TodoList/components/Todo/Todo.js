@@ -10,14 +10,18 @@ export default function Todo({
 }) {
   return (
     <div className="Todo-item">
-      {item}
-      <button onClick={() => handleDelete(id)}>X</button>
-      <label>
-        <input
-          type="checkbox"
-          onChange={e => (e.target.value ? handleComplete(id) : handleUndo(id))}
-        />
-      </label>
+      <span className="Todo-item__text">{item}</span>
+      <div>
+        <button onClick={() => handleDelete(id)}>Remove</button>
+        <label>
+          <input
+            type="checkbox"
+            onChange={e => {
+              return e.target.checked ? handleComplete(id) : handleUndo(id);
+            }}
+          />
+        </label>
+      </div>
     </div>
   );
 }

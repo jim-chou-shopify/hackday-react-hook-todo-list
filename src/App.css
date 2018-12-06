@@ -1,7 +1,31 @@
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style: none;
+  margin: 0;
+}
+
+button,
+input {
+  margin: 0 0.5rem;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+}
+
 .App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
   background-color: #282c34;
   min-height: 100vh;
+  color: white;
 }
 
 .App-logo {
@@ -18,10 +42,6 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -31,6 +51,27 @@
   }
 }
 
+.TodoList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 500px;
+}
+
 .Todo-item {
+  display: flex;
+  justify-content: space-between;
   color: white;
+}
+
+form {
+  margin-bottom: 1rem;
+}
+
+.Todo-item__text,
+.Todo-item--done {
+  text-align: left;
+  max-width: 300px;
+  word-wrap: break-word;
 }

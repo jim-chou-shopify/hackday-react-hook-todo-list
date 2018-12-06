@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import TodoList from "./TodoList";
+import { createTodo } from "./TodoList/components/Todo";
 
+const initialTodos = [createTodo("Watch React Conf")];
 class App extends Component {
   render() {
     return (
@@ -16,7 +18,7 @@ class App extends Component {
             </span>
           </span>
         </header>
-        <TodoList initialTodos={["Watch React Conf"]} />
+        <TodoList initialTodos={initialTodos} />
       </div>
     );
   }

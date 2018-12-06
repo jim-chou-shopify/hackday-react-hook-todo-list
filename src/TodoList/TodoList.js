@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import Todo from "./components/Todo";
+import Todo, { createTodo } from "./components/Todo";
 
 export default function TodoList(props) {
   const [todoInput, setTodoInput] = useState("");
@@ -12,7 +12,8 @@ export default function TodoList(props) {
   }
 
   function handleAddTodo() {
-    setTodos([...todos, todoInput]);
+    const value = todoInput.trim();
+    value.length > 0 && setTodos([...todos, createTodo(value)]);
   }
 
   function handleComplete(id) {
@@ -21,54 +22,79 @@ export default function TodoList(props) {
 
   function handleUndo(id) {
     const ids = completedTodoIds.filter(completedId => completedId !== id);
-    console.log(ids);
     setCompletedTodoIds(ids);
   }
 
-  function handleDelete(index) {
-    const newTodos = [
-      ...todos.slice(0, index),
-      ...todos.slice(index + 1, todos.length)
-    ];
-    setTodos(newTodos);
+  function handleDelete(id) {
+    const todoIndex = todos.findIndex(todo => todo.id === id);
+    if (todoIndex > -1) {
+      const newTodos = [
+        ...todos.slice(0, todoIndex),
+        ...todos.slice(todoIndex + 1, todos.length)
+      ];
+      setTodos(newTodos);
+    }
+
+    const completedTodoIndex = completedTodoIds.findIndex(
+      completedTodoId => completedTodoId === id
+    );
+    if (completedTodoIndex > -1) {
+      const newCompletedTodoIds = [
+        ...completedTodoIds.slice(0, completedTodoIndex),
+        ...completedTodoIds.slice(
+          completedTodoIndex + 1,
+          completedTodoIds.length
+        )
+      ];
+      setCompletedTodoIds(newCompletedTodoIds);
+    }
   }
 
-  const todosMarkup =
-    todos &&
-    todos.map((todo, i) => (
-      <li key={i}>
-        <Todo
-          id={i}
-          item={todo}
-          handleDelete={handleDelete}
-          handleComplete={handleComplete}
-          handleUndo={handleUndo}
-        />
-      </li>
-    ));
+  const todosMarkup = todos.map(({ id, value }) => (
+    <li key={id}>
+      <Todo
+        id={id}
+        item={value}
+        handleDelete={handleDelete}
+        handleComplete={handleComplete}
+        handleUndo={handleUndo}
+      />
+    </li>
+  ));
 
-  const completedTodoMarkup =
-    completedTodoIds &&
-    completedTodoIds.map(id => {
-      return <li key={id}>{todos[id]}</li>;
-    });
+  const completedTodoMarkup = completedTodoIds.map(id => {
+    const todo = todos.find(todo => todo.id === id);
+    return (
+      todo && (
+        <li key={id} className="Todo-item--done">
+          {todo.value}
+        </li>
+      )
+    );
+  });
+
   return (
-    <>
+    <div className="TodoList">
       <form>
         <input type="text" onChange={handleTodoInput} value={todoInput} />
         <button type="button" onClick={handleAddTodo}>
           Add
         </button>
       </form>
-      <ul>{todosMarkup}</ul>
       <section>
-        <h2>Completed todos:</h2>
-        <ul>{completedTodoMarkup}</ul>
+        <h2>Todos:</h2>
+        <ul>{todosMarkup}</ul>
       </section>
-    </>
+      {Boolean(completedTodoIds.length) && (
+        <section>
+          <h2>Completed todos:</h2>
+          <ul>{completedTodoMarkup}</ul>
+        </section>
+      )}
+    </div>
   );
 }
 
 TodoList.propTypes = {
-  initialTodos: PropTypes.object
+  initialTodos: PropTypes.arrayOf(Object)
 };
