@@ -4,23 +4,13 @@ import Todo, { createTodo } from "./components/Todo";
 
 async function fetchTodos() {
   const response = await fetch("https://jsonplaceholder.typicode.com/todos");
-  return await response.json();
+  return response.json();
 }
 
 export default function TodoList() {
   const [todoInput, setTodoInput] = useState("");
-  const [todos, setTodos] = useState([]);
   const [completedTodoIds, setCompletedTodoIds] = useState([]);
-
-  useEffect(async () => {
-    const todo = await fetchTodos();
-    const firstFiveTodos = todo.slice(0, 5);
-    setTodos(firstFiveTodos);
-    // To run an effect and clean it up only once (on mount and unmount),
-    // you can pass an empty array ([]) as a second argument.
-    // This tells React that your effect doesn’t depend on any values from props or state,
-    // so it never needs to re-run.
-  }, []);
+  const [todos, setTodos] = useTodos();
 
   function handleTodoInput(e) {
     setTodoInput(e.target.value);
@@ -108,6 +98,23 @@ export default function TodoList() {
       )}
     </div>
   );
+}
+
+function useTodos() {
+  const [todos, setTodos] = useState([]);
+
+  useEffect(() => {
+    fetchTodos().then(todo => {
+      const firstFiveTodos = todo.slice(0, 5);
+      setTodos(firstFiveTodos);
+    });
+    // To run an effect and clean it up only once (on mount and unmount),
+    // you can pass an empty array ([]) as a second argument.
+    // This tells React that your effect doesn’t depend on any values from props or state,
+    // so it never needs to re-run.
+  }, []);
+
+  return [todos, setTodos];
 }
 
 TodoList.propTypes = {
