@@ -3,14 +3,14 @@ import PropTypes from "prop-types";
 
 export default function Todo({
   id,
-  item,
+  title,
   handleDelete,
   handleComplete,
   handleUndo
 }) {
   return (
     <div className="Todo-item">
-      <span className="Todo-item__text">{item}</span>
+      <span className="Todo-item__text">{title}</span>
       <div>
         <button onClick={() => handleDelete(id)}>Remove</button>
         <label>
@@ -28,7 +28,7 @@ export default function Todo({
 
 Todo.propTypes = {
   id: PropTypes.number,
-  item: PropTypes.string,
+  title: PropTypes.string,
   handleComplete: PropTypes.func,
   handleDelete: PropTypes.func,
   handleUndo: PropTypes.func
